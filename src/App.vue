@@ -153,7 +153,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" @click.prevent="changeModal">Cancelar</button>
-              <input type="submit" class="btn btn-primary">
+              <input type="submit" class="btn btn-primary" value="Agregar">
             </div>
           </form>
         </div>
@@ -172,9 +172,9 @@ export default {
       toDo: [],
       completed: [],
       newTransfer: {
-        from: '',
-        to: '',
-        amount: '',
+        from:    '',
+        to:      '',
+        amount:  '',
         concept: ''
       }
     }
@@ -184,16 +184,22 @@ export default {
       this.modal = !this.modal;
     },
     cleanForm () {
-      this.newTransfer.from = '';
-      this.newTransfer.to = '';
-      this.newTransfer.amount = '';
+      this.newTransfer.from    = '';
+      this.newTransfer.to      = '';
+      this.newTransfer.amount  = '';
       this.newTransfer.concept = '';
     },
     addTask () {
+      if (!this.newTransfer.from   || !this.newTransfer.to ||
+          !this.newTransfer.amount || !this.newTransfer.concept) {
+        this.changeModal();
+        return;
+      }
+
       this.toDo.push({
-        from: this.newTransfer.from, 
-        to: this.newTransfer.to, 
-        amount: this.newTransfer.amount, 
+        from:    this.newTransfer.from, 
+        to:      this.newTransfer.to, 
+        amount:  this.newTransfer.amount, 
         concept: this.newTransfer.concept
       });
 
@@ -212,7 +218,7 @@ export default {
     }
   },
   mounted() {
-    this.toDo = JSON.parse(localStorage.getItem('tasks')) || [];
+    this.toDo      = JSON.parse(localStorage.getItem('tasks')) || [];
     this.completed = JSON.parse(localStorage.getItem('completed')) || [];
   },
   computed: {
@@ -224,24 +230,16 @@ export default {
     },
     toTransfer () {
       let total = 0;
-
-      this.toDo.forEach(t => {
-        total += parseInt(t.amount);
-      });
-
+      this.toDo.forEach(t => { total += parseInt(t.amount) });
       return total;
     },
     transferred () {
       let total = 0;
-
-      this.completed.forEach(t => {
-        total += parseInt(t.amount);
-      });
-
+      this.completed.forEach(t => { total += parseInt(t.amount) });
       return total;
     },
     getProgress () {
-      let toDo = this.toDo.length;
+      let toDo      = this.toDo.length;
       let completed = this.completed.length;
 
       if (toDo > 0 || completed > 0)
